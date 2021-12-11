@@ -84,12 +84,6 @@
   }
 </script>
 
-<svelte:head>
-  <style>
-    @import url("fonts/FjallaOne-Regular.ttf");
-  </style>
-</svelte:head>
-
 <svelte:window bind:innerWidth />
 
 <div class={innerWidth < mobile ? 'wrapper mobile' : 'wrapper'}>
