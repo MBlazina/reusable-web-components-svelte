@@ -7,14 +7,52 @@
   export let city = "Pula";
   export let units = "metric";
 
+  let url;
   let description;
   let weatherIcon;
   let icon;
   let temp;
-  let url;
+  let feelsLike;
+  let pressure;
+  let humidity;
+  let windSpeed;
+  let windDirection;
+  let windDirectionConverted;
+
+  function convertWindDirection(direction) {
+    console.log(windDirection)
+    switch (true) {
+      case (direction >= 337.5 && direction < 22.5):
+        windDirectionConverted = "N";
+        break;
+      case (direction >= 22.5 && direction < 67.5):
+        windDirectionConverted = "NE";
+        break;
+      case (direction >= 67.5 && direction < 112.5):
+        windDirectionConverted = "E";
+        break;
+      case (direction >= 112.5 && direction < 157.5):
+        windDirectionConverted = "SE";
+        break;
+      case (direction >= 157.5 && direction < 202.5):
+        windDirectionConverted = "S";
+        break;
+      case (direction >= 202.5 && direction < 247.5):
+        windDirectionConverted = "SW";
+        break;
+      case (direction >= 247.5 && direction < 292.5):
+        windDirectionConverted = "W";
+        break;
+      case (direction >= 292.5 && direction < 337.5):
+        windDirectionConverted = "NW";
+        break;
+      default:
+      windDirectionConverted = direction;
+    }
+    console.log(windDirectionConverted)
+  }
 
   async function initWeather() {
-    console.log(url);
     url = initialData.host + "?q=" + city + "&appid=" + initialData.key + "&units=" + units;
     const data = await getWeather(url).then((data) => {
       console.log(data);
@@ -22,6 +60,12 @@
       weatherIcon = data.weather[0].icon;
       icon = initialData.weatherIconURL + weatherIcon + initialData.weatherIconExtension;
       temp = data.main.temp;
+      feelsLike = data.main.feels_like;
+      pressure = data.main.pressure;
+      humidity = data.main.humidity;
+      windSpeed = data.wind.speed;
+      windDirection = data.wind.deg;
+      convertWindDirection(windDirection);
     });
   }
 
@@ -57,6 +101,27 @@
         {:else if units === "imperial"}
           <p class="temp-unit temp-unit-imperial" on:click={changeUnits}>F</p>
         {/if}
+      </div>
+      <div class="weather-data">
+        <p>
+          Feels like: {feelsLike}
+          {#if units === "metric"}
+            <span> C</span>
+          {:else}
+            <span> F</span>
+          {/if}
+        </p>
+        <p>Pressure: {pressure} hPa</p>
+        <p>Humidity: {humidity} %</p>
+        <p>
+          Wind: {windSpeed}
+          {#if units === "metric"}
+            <span> km/h</span>
+          {:else}
+            <span> mph</span>
+          {/if}
+          <span>{windDirectionConverted}</span>
+        </p>
       </div>
     </main>
   {/await}
@@ -114,7 +179,7 @@
     line-height: 1;
     &::after {
       opacity: 0.3;
-        position: absolute;
+      position: absolute;
     }
   }
   .temp-unit-metric {
