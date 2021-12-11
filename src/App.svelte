@@ -7,37 +7,33 @@
   export let city = "Pula";
   export let units = "metric";
 
-  let url;
-  let description;
-  let weatherIcon;
-  let icon;
-  let temp;
-  let feelsLike;
-  let pressure;
-  let humidity;
-  let windSpeed;
-  let windDirection;
-  let windDirectionConverted;
+  $: urlWeather = initialData.host + initialData.requestWeather + "?q=" + city + "&appid=" + initialData.key + "&units=" + units;
+  $: urlForecast = initialData.host + initialData.requestForecast + "?q=" + city + "&appid=" + initialData.key + "&units=" + units;
 
-  async function initWeather() {
-    url = initialData.host + "?q=" + city + "&appid=" + initialData.key + "&units=" + units;
-    const data = await getWeather(url).then((data) => {
-      console.log(data);
-      description = data.weather[0].description;
-      weatherIcon = data.weather[0].icon;
-      icon = initialData.weatherIconURL + weatherIcon + initialData.weatherIconExtension;
-      temp = toOneDecimal(data.main.temp);
-      feelsLike = toOneDecimal(data.main.feels_like);
-      pressure = data.main.pressure;
-      humidity = data.main.humidity;
-      windSpeed = toOneDecimal(data.wind.speed);
-      windDirection = data.wind.deg;
-      convertWindDirection(windDirection);
-    });
+  $: innerWidth = 0;
+  const mobile = 400;
+  //openweathermap gives us forecast for every 3 hours from when we fetch the data.
+  //To get 24h intervals forecast => 24/3 = 8, array starts from 0 so we have 24h intervals at list item 7,15,23,31,39
+  const forecastListItems = [7, 15, 23, 31, 39];
+
+  function timeConverter(UNIX_timestamp) {
+    let a = new Date(UNIX_timestamp * 1000);
+    let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    let dayNum = new Date(UNIX_timestamp * 1000).getDay();
+    let dayOfWeek = days[dayNum];
+    /* let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    let year = a.getFullYear();
+    let month = months[a.getMonth()];
+    let date = a.getDate();
+    let hour = a.getHours();
+    let min = a.getMinutes();
+    let sec = a.getSeconds();
+    let time = date + " " + month + " " + year + " " + hour + ":" + min + ":" + sec; */
+    return dayOfWeek;
   }
 
   function toOneDecimal(num) {
-    num = Math.round (num * 10) / 10
+    num = Math.round(num * 10) / 10;
     return num;
   }
   function changeUnits() {
@@ -46,40 +42,45 @@
     } else if (units === "imperial") {
       units = "metric";
     }
-    initWeather();
   }
 
   function convertWindDirection(direction) {
-    console.log(windDirection);
     switch (true) {
       case direction >= 337.5 && direction < 22.5:
-        windDirectionConverted = "N";
+        return "N";
         break;
       case direction >= 22.5 && direction < 67.5:
-        windDirectionConverted = "NE";
+        return "NE";
         break;
       case direction >= 67.5 && direction < 112.5:
-        windDirectionConverted = "E";
+        return "E";
         break;
       case direction >= 112.5 && direction < 157.5:
-        windDirectionConverted = "SE";
+        return "SE";
         break;
       case direction >= 157.5 && direction < 202.5:
-        windDirectionConverted = "S";
+        return "S";
         break;
       case direction >= 202.5 && direction < 247.5:
-        windDirectionConverted = "SW";
+        return "SW";
         break;
       case direction >= 247.5 && direction < 292.5:
-        windDirectionConverted = "W";
+        return "W";
         break;
       case direction >= 292.5 && direction < 337.5:
-        windDirectionConverted = "NW";
+        return "NW";
         break;
       default:
-        windDirectionConverted = direction;
+        return direction;
     }
-    console.log(windDirectionConverted);
+  }
+
+  let isForecastWindowOpen = false;
+  function handleOpenForecast() {
+    if (!isForecastWindowOpen) {
+      getWeather(urlForecast);
+    }
+    isForecastWindowOpen = !isForecastWindowOpen;
   }
 </script>
 
@@ -89,17 +90,19 @@
   </style>
 </svelte:head>
 
-<div class="wrapper">
-  {#await initWeather()}
+<svelte:window bind:innerWidth />
+
+<div class={innerWidth < mobile ? 'wrapper mobile' : 'wrapper'}>
+  {#await getWeather(urlWeather)}
     <p class="loading">Loading...</p>
-  {:then}
+  {:then data}
     <header>
-      <h1 class="title">{city}, {description}</h1>
-      <img class="icon" src={icon} alt="" />
+      <h1 class="title">{data.name}, {data.weather[0].description}</h1>
+      <img class="icon" src={initialData.weatherIconURL + data.weather[0].icon + initialData.weatherIconExtension} alt="" />
     </header>
     <main>
       <div class="temperature">
-        <p class="temp-number">{temp}</p>
+        <p class="temp-number">{toOneDecimal(data.main.temp)}</p>
         {#if units === "metric"}
           <p class="temp-unit temp-unit-metric" on:click={changeUnits}>O</p>
         {:else if units === "imperial"}
@@ -108,31 +111,64 @@
       </div>
       <div class="weather-data">
         <p>
-          Feels like: {feelsLike}
+          Feels like: {toOneDecimal(data.main.feels_like)}
           {#if units === "metric"}
             <span> C</span>
           {:else}
             <span> F</span>
           {/if}
         </p>
-        <p>Pressure: {pressure} hPa</p>
-        <p>Humidity: {humidity} %</p>
+        <p>Pressure: {data.main.pressure} hPa</p>
+        <p>Humidity: {data.main.humidity} %</p>
         <p>
-          Wind: {windSpeed}
+          Wind: {toOneDecimal(data.wind.speed)}
           {#if units === "metric"}
             <span> km/h</span>
           {:else}
             <span> mph</span>
           {/if}
-          <span>{windDirectionConverted}</span>
+          <span>{convertWindDirection(data.wind.deg)}</span>
         </p>
       </div>
     </main>
   {/await}
+
+  <details on:click={handleOpenForecast}>
+    <!--  -->
+    <!--  -->
+    <summary>
+      {#if isForecastWindowOpen}
+        -
+      {:else}
+        +
+      {/if}
+    </summary>
+    <!--  {#if isForecastWindowOpen} -->
+    <div class="forecast-container">
+      <p class="forecast-title">5 Day Forecast</p>
+      <div class="forecast-days">
+        {#await getWeather(urlForecast)}
+          <p>Loading forecast...</p>
+        {:then data}
+          {#each forecastListItems as day}
+            <div class="forecast-day">
+              <p class="forecast-day-data">{timeConverter(data.list[day].dt)}</p>
+              <p class="forecast-day-data">{toOneDecimal(data.list[day].main.temp)}</p>
+              <p class="forecast-day-data">{data.list[day].weather[0].main}</p>
+            </div>
+          {/each}
+        {:catch error}
+          <p>{error.message}</p>
+        {/await}
+      </div>
+    </div>
+    <!-- {/if} -->
+  </details>
 </div>
 
 <style lang="scss">
   $color-primary: #09095b;
+  $color-primary-lighter: #3d618a;
   $color-text: white;
 
   * {
@@ -151,11 +187,22 @@
     align-items: center;
   }
   .wrapper {
-    background: $color-primary;
+    background: linear-gradient($color-primary, $color-primary-lighter);
     border: 2px solid white;
     border-radius: 18px;
     box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.3);
     padding: 15px;
+    width: 100%;
+    max-width: 350px;
+
+    &.mobile {
+      main {
+        display: block;
+      }
+      .forecast-title {
+        text-align: center;
+      }
+    }
   }
   header {
     display: flex;
@@ -164,33 +211,41 @@
   }
   .title {
     color: $color-text;
+    font-size: 14px;
   }
   .icon {
     max-width: 50px;
     max-height: 50px;
   }
+  main {
+    display: flex;
+    justify-content: space-between;
+  }
   .temperature {
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
   }
   .temp-number {
-    font-size: 45px;
+    font-size: 55px;
     line-height: 1;
   }
   .temp-unit {
+    align-self: flex-start;
+    padding-left: 5px;
     cursor: pointer;
     font-size: 25px;
     line-height: 1;
     &::after {
       opacity: 0.3;
       position: absolute;
+      margin-left: 5px;
     }
   }
   .temp-unit-metric {
     &:hover {
       &::after {
-        content: "F";
+        content: " F";
       }
     }
   }
@@ -199,6 +254,57 @@
       &::after {
         content: "O";
       }
+    }
+  }
+  .forecast-container {
+    border: 2px solid white;
+    border-radius: 4px;
+    padding: 15px 0;
+  }
+  .forecast-title {
+    line-height: 1;
+    padding: 0 3px 15px 3px;
+  }
+  .forecast-days {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 12px;
+  }
+  .forecast-day {
+    flex: 1;
+    padding: 0 2px;
+    text-align: center;
+    &:nth-child(odd) {
+      background: $color-primary-lighter;
+    }
+  }
+  .forecast-day-data {
+    padding-bottom: 15px;
+    &:first-child {
+      padding-top: 15px;
+    }
+  }
+  details > summary {
+    list-style: none;
+  }
+  details > summary::-webkit-details-marker {
+    display: none;
+  }
+  summary {
+    margin: 4px 0;
+    margin-left: auto;
+    width: 30px;
+    height: 30px;
+    background: white;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+    line-height: 1;
+    font-weight: bold;
+    &::marker {
+      display: none;
     }
   }
 </style>
