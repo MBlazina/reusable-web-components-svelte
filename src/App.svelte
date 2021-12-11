@@ -19,39 +19,6 @@
   let windDirection;
   let windDirectionConverted;
 
-  function convertWindDirection(direction) {
-    console.log(windDirection)
-    switch (true) {
-      case (direction >= 337.5 && direction < 22.5):
-        windDirectionConverted = "N";
-        break;
-      case (direction >= 22.5 && direction < 67.5):
-        windDirectionConverted = "NE";
-        break;
-      case (direction >= 67.5 && direction < 112.5):
-        windDirectionConverted = "E";
-        break;
-      case (direction >= 112.5 && direction < 157.5):
-        windDirectionConverted = "SE";
-        break;
-      case (direction >= 157.5 && direction < 202.5):
-        windDirectionConverted = "S";
-        break;
-      case (direction >= 202.5 && direction < 247.5):
-        windDirectionConverted = "SW";
-        break;
-      case (direction >= 247.5 && direction < 292.5):
-        windDirectionConverted = "W";
-        break;
-      case (direction >= 292.5 && direction < 337.5):
-        windDirectionConverted = "NW";
-        break;
-      default:
-      windDirectionConverted = direction;
-    }
-    console.log(windDirectionConverted)
-  }
-
   async function initWeather() {
     url = initialData.host + "?q=" + city + "&appid=" + initialData.key + "&units=" + units;
     const data = await getWeather(url).then((data) => {
@@ -59,16 +26,20 @@
       description = data.weather[0].description;
       weatherIcon = data.weather[0].icon;
       icon = initialData.weatherIconURL + weatherIcon + initialData.weatherIconExtension;
-      temp = data.main.temp;
-      feelsLike = data.main.feels_like;
+      temp = toOneDecimal(data.main.temp);
+      feelsLike = toOneDecimal(data.main.feels_like);
       pressure = data.main.pressure;
       humidity = data.main.humidity;
-      windSpeed = data.wind.speed;
+      windSpeed = toOneDecimal(data.wind.speed);
       windDirection = data.wind.deg;
       convertWindDirection(windDirection);
     });
   }
 
+  function toOneDecimal(num) {
+    num = Math.round (num * 10) / 10
+    return num;
+  }
   function changeUnits() {
     if (units === "metric") {
       units = "imperial";
@@ -76,6 +47,39 @@
       units = "metric";
     }
     initWeather();
+  }
+
+  function convertWindDirection(direction) {
+    console.log(windDirection);
+    switch (true) {
+      case direction >= 337.5 && direction < 22.5:
+        windDirectionConverted = "N";
+        break;
+      case direction >= 22.5 && direction < 67.5:
+        windDirectionConverted = "NE";
+        break;
+      case direction >= 67.5 && direction < 112.5:
+        windDirectionConverted = "E";
+        break;
+      case direction >= 112.5 && direction < 157.5:
+        windDirectionConverted = "SE";
+        break;
+      case direction >= 157.5 && direction < 202.5:
+        windDirectionConverted = "S";
+        break;
+      case direction >= 202.5 && direction < 247.5:
+        windDirectionConverted = "SW";
+        break;
+      case direction >= 247.5 && direction < 292.5:
+        windDirectionConverted = "W";
+        break;
+      case direction >= 292.5 && direction < 337.5:
+        windDirectionConverted = "NW";
+        break;
+      default:
+        windDirectionConverted = direction;
+    }
+    console.log(windDirectionConverted);
   }
 </script>
 
@@ -175,6 +179,7 @@
     line-height: 1;
   }
   .temp-unit {
+    cursor: pointer;
     font-size: 25px;
     line-height: 1;
     &::after {
