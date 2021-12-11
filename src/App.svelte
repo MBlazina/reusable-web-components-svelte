@@ -10,8 +10,8 @@
   $: urlWeather = initialData.host + initialData.requestWeather + "?q=" + city + "&appid=" + initialData.key + "&units=" + units;
   $: urlForecast = initialData.host + initialData.requestForecast + "?q=" + city + "&appid=" + initialData.key + "&units=" + units;
 
-  let isForecastOpen = false;
-
+  $: innerWidth = 0;
+  const mobile = 400;
   //openweathermap gives us forecast for every 3 hours from when we fetch the data.
   //To get 24h intervals forecast => 24/3 = 8, array starts from 0 so we have 24h intervals at list item 7,15,23,31,39
   const forecastListItems = [7, 15, 23, 31, 39];
@@ -77,9 +77,10 @@
 
   let isForecastWindowOpen = false;
   function handleOpenForecast() {
-    getWeather(urlForecast);
+    if (!isForecastWindowOpen) {
+      getWeather(urlForecast);
+    }
     isForecastWindowOpen = !isForecastWindowOpen;
-    console.log(isForecastWindowOpen);
   }
 </script>
 
@@ -89,7 +90,9 @@
   </style>
 </svelte:head>
 
-<div class="wrapper">
+<svelte:window bind:innerWidth />
+
+<div class={innerWidth < mobile ? 'wrapper mobile' : 'wrapper'}>
   {#await getWeather(urlWeather)}
     <p class="loading">Loading...</p>
   {:then data}
@@ -132,32 +135,40 @@
 
   <details on:click={handleOpenForecast}>
     <!--  -->
-    <summary />
-    {#if isForecastWindowOpen}
-      <div class="forecast-container">
-        <p class="forecast-title">5 Day Forecast</p>
-        <div class="forecast-days">
-          {#await getWeather(urlForecast)}
-            <p>Loading forecast...</p>
-          {:then data}
-            {#each forecastListItems as day}
-              <div class="forecast-day">
-                <p class="forecast-day-data">{timeConverter(data.list[day].dt)}</p>
-                <p class="forecast-day-data">{toOneDecimal(data.list[day].main.temp)}</p>
-                <p class="forecast-day-data">{data.list[day].weather[0].main}</p>
-              </div>
-            {/each}
-          {:catch error}
-            <p>{error.message}</p>
-          {/await}
-        </div>
+    <!--  -->
+    <summary>
+      {#if isForecastWindowOpen}
+        -
+      {:else}
+        +
+      {/if}
+    </summary>
+    <!--  {#if isForecastWindowOpen} -->
+    <div class="forecast-container">
+      <p class="forecast-title">5 Day Forecast</p>
+      <div class="forecast-days">
+        {#await getWeather(urlForecast)}
+          <p>Loading forecast...</p>
+        {:then data}
+          {#each forecastListItems as day}
+            <div class="forecast-day">
+              <p class="forecast-day-data">{timeConverter(data.list[day].dt)}</p>
+              <p class="forecast-day-data">{toOneDecimal(data.list[day].main.temp)}</p>
+              <p class="forecast-day-data">{data.list[day].weather[0].main}</p>
+            </div>
+          {/each}
+        {:catch error}
+          <p>{error.message}</p>
+        {/await}
       </div>
-    {/if}
+    </div>
+    <!-- {/if} -->
   </details>
 </div>
 
 <style lang="scss">
   $color-primary: #09095b;
+  $color-primary-lighter: #3d618a;
   $color-text: white;
 
   * {
@@ -176,13 +187,22 @@
     align-items: center;
   }
   .wrapper {
-    background: $color-primary;
+    background: linear-gradient($color-primary, $color-primary-lighter);
     border: 2px solid white;
     border-radius: 18px;
     box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.3);
     padding: 15px;
     width: 100%;
-    max-width: 400px;
+    max-width: 350px;
+
+    &.mobile {
+      main {
+        display: block;
+      }
+      .forecast-title {
+        text-align: center;
+      }
+    }
   }
   header {
     display: flex;
@@ -204,25 +224,28 @@
   .temperature {
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
   }
   .temp-number {
-    font-size: 45px;
+    font-size: 55px;
     line-height: 1;
   }
   .temp-unit {
+    align-self: flex-start;
+    padding-left: 5px;
     cursor: pointer;
     font-size: 25px;
     line-height: 1;
     &::after {
       opacity: 0.3;
       position: absolute;
+      margin-left: 5px;
     }
   }
   .temp-unit-metric {
     &:hover {
       &::after {
-        content: "F";
+        content: " F";
       }
     }
   }
@@ -247,8 +270,19 @@
     justify-content: space-between;
     padding: 0 12px;
   }
+  .forecast-day {
+    flex: 1;
+    padding: 0 2px;
+    text-align: center;
+    &:nth-child(odd) {
+      background: $color-primary-lighter;
+    }
+  }
   .forecast-day-data {
     padding-bottom: 15px;
+    &:first-child {
+      padding-top: 15px;
+    }
   }
   details > summary {
     list-style: none;
@@ -257,9 +291,18 @@
     display: none;
   }
   summary {
-    width: 100px;
-    height: 50px;
+    margin: 4px 0;
+    margin-left: auto;
+    width: 30px;
+    height: 30px;
     background: white;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+    line-height: 1;
+    font-weight: bold;
     &::marker {
       display: none;
     }
