@@ -1,7 +1,7 @@
 # Reusable web components with Svelte
 
 ## tldr summary
-I tried creating a simple test weather widget that pulls data from openweathermap api with Svelte and modify it to be used as a web component. The end result is a JS file of ~14kb and you can see a live implementation hosted here [Link](https://cloudy-smart-metatarsal.glitch.me/).
+I tried creating a simple test weather widget that pulls data from openweathermap api with Svelte and modify it to be used as a web component <custom-element /> where we can just pass props as atributes, for example city="Zagreb", and the widget fetch the weather for Zagreb. The end result is a JS file of ~14kb and you can see a live implementation hosted here [Link](https://cloudy-smart-metatarsal.glitch.me/).
 
 End result
 
