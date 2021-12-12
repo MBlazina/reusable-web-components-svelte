@@ -1,4 +1,14 @@
 # Reusable web components with Svelte
+
+## tldr summary
+I tried creating a simple test weather widget that pulls data from openweathermap api with Svelte and modify it to be used as a web component. The end result is a JS file of ~14kb and you can see a live implementation hosted here [Link](https://cloudy-smart-metatarsal.glitch.me/).
+![image](https://user-images.githubusercontent.com/26542107/145725582-be27d310-3989-4609-a862-97eec6068896.png)
+
+End result
+
+![image](https://user-images.githubusercontent.com/26542107/145725549-de5eb06f-468d-4214-a4e4-94ecf2f6608f.png)
+
+
 ## Why Svelte
 One of the most popular frontend libraries at the moment is React.js but it is not very usable for web components. The main reason is that as any other library you need to add all its dependancies to your project/component and react.js and react-dom.js with any web component no mather how small it is you will have attached like 150kb of dependancies and here is where Svelte comes in
 
@@ -34,10 +44,14 @@ Svelte also has a lot less boilerplate code or 8 lines block of code with array 
 
 ![svelereact](https://user-images.githubusercontent.com/26542107/145724696-ea4abbed-200a-40fe-8c00-c31a155a98b6.jpg)
 
+
 2. ### You can use SCSS that is minified and unused code is deleted from the build
 
+
 3. ### Easy props and state definition and usage
-In svelte all the props at their core are variables and to define a simple city prop with an initial value of 'Pula' for example, is simply `export let city = "Pula";`
+In svelte all the props at their core are variables and to define a simple city prop with an initial value of 'Pula' for example, is simply 
+`export let city = "Pula";`
+
 
 4. ### Svelte await block
 if we need to get data from some API and display it in some elements for example, we can use the svelte special await block that looks like:
@@ -62,4 +76,34 @@ Example of fetching weather data and add it in a header:
 ```
 
 
+5. ### Svelte each block
+Going trough a list of elements and generating required items is very easy using the each block nad it looks like:
+```
+{#each items as item}
+    <li> {item} </li>
+{/each}
+```
 
+Real example:
+```
+{#each forecastListItems as day}
+    <div class="forecast-day">
+         <p>{data.list[day].dt}</p>
+         <p>{data.list[day].main.temp}</p>
+         <p>{data.list[day].weather[0].main}</p>
+   </div>
+{/each}
+```
+
+6. ### Svelte if block
+Very easy to use if-else block implementation, example:
+```
+{#if units === "metric"}
+     <p class="temp-unit temp-unit-metric" on:click={changeUnits}>O</p>
+{:else if units === "imperial"}
+     <p class="temp-unit temp-unit-imperial" on:click={changeUnits}>F</p>
+{/if}
+```
+
+# Conclusion
+In my opinion, using Svelte to create reusable web components is a great choice because of all the advantages listed above and those are just some of the most usefull ones.
