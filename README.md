@@ -1,10 +1,33 @@
 # Reusable web components with Svelte
-## intro
-Reusable web components are an idea to use custom HTML components that someone can add to their site or project and you do not need to worry that someone somewhere will break something because web components are entities by themselvesThey contain their shadow-dom, their HTML, their JS and their styling safely bundled in a separate file from the rest of the project. 
+## Why Svelte
+One of the most popular frontend libraries at the moment is React.js but it is not very usable for web components. The main reason is that as any other library you need to add all its dependancies to your project/component and react.js and react-dom.js with any web component no mather how small it is you will have attached like 150kb of dependancies and here is where Svelte comes in
 
-For example if you need to add a special widget to your site you do not need to waste time implementing all its code, updating scripts if needed, check that there are no global classes affecting it by accidents and similar problems, you add the widget.js file to your site and implement the custom html tag <awesome-widget /> and thats it.
+Writing web components the hardcore way, pure JS is a bit of a pain. You need to write your component in pure JS with element.innerHTML and than all your code is wraped in template literals and you lose any autocomplete, suggestion, emmet or similar coding help that you usually have, and for complex components it would be very hard to write it and maintain later.
 
-The most popular library at the moment is of course React and noone can deny that anyone proficient in it can do apsolutly anything but we can not overlook its biggest flaw in the world of usable components it is also that it is a library. It means that it is something you add to your site or project to help you build it as best as possible and with reusable web components we want to maintain the bundle size as light as possible, because the performance of the website is one of the most important thing for your site or business. Imagine making a web component  
+Example of a pure JS web component:
+```
+template.innerHTML = `
+  <style>
+    h3 {
+      color: coral;
+    }
+  </style>
+
+  <div class="user-card">
+    <img />
+    <div>
+      <h3></h3>
+      <div class="info">
+        <p><slot name="email"/></p>
+        <p>PHONE</p>
+      </div>
+      <button id="toggle-info">Hide Info</button>
+    </div>
+  </div>
+`;
+```
+
+
 
 
 
