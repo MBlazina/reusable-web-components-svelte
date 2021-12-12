@@ -1,3 +1,19 @@
+# Reusable web components with Svelte
+## intro
+Reusable web components are an idea to use custom HTML components that someone can add to their site or project and you do not need to worry that someone somewhere will break something because web components are entities by themselvesThey contain their shadow-dom, their HTML, their JS and their styling safely bundled in a separate file from the rest of the project. 
+
+For example if you need to add a special widget to your site you do not need to waste time implementing all its code, updating scripts if needed, check that there are no global classes affecting it by accidents and similar problems, you add the widget.js file to your site and implement the custom html tag <awesome-widget /> and thats it.
+
+The most popular library at the moment is of course React and noone can deny that anyone proficient in it can do apsolutly anything but we can not overlook its biggest flaw in the world of usable components it is also that it is a library. It means that it is something you add to your site or project to help you build it as best as possible and with reusable web components we want to maintain the bundle size as light as possible, because the performance of the website is one of the most important thing for your site or business. Imagine making a web component  
+
+
+
+
+
+
+
+
+
 *Psst — looking for a more complete solution? Check out [SvelteKit](https://kit.svelte.dev), the official framework for building web applications of all sizes, with a beautiful development experience and flexible filesystem-based routing.*
 
 *Looking for a shareable component template instead? You can [use SvelteKit for that as well](https://kit.svelte.dev/docs#packaging) or the older [sveltejs/component-template](https://github.com/sveltejs/component-template)*
