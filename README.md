@@ -2,9 +2,10 @@
 
 ## tldr summary
 I tried creating a simple test weather widget that pulls data from openweathermap api with Svelte and modify it to be used as a web component. The end result is a JS file of ~14kb and you can see a live implementation hosted here [Link](https://cloudy-smart-metatarsal.glitch.me/).
-![image](https://user-images.githubusercontent.com/26542107/145725582-be27d310-3989-4609-a862-97eec6068896.png)
 
 End result
+
+![image](https://user-images.githubusercontent.com/26542107/145725582-be27d310-3989-4609-a862-97eec6068896.png)
 
 ![image](https://user-images.githubusercontent.com/26542107/145725549-de5eb06f-468d-4214-a4e4-94ecf2f6608f.png)
 
