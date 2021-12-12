@@ -27,6 +27,13 @@ template.innerHTML = `
 `;
 ```
 
+## Pros of Svelte
+### Bundle size
+As we said, Svelte is a compiler so all your code in the end will be optimized, minimised and also all the unused scss will be deleted in the build.
+Svelte also has a lot less boilerplate code or 8 lines block of code with array destructuring to update one variable like it is the case of React but the user experience and ease of use is subjective so I will just leave a meme here :D 
+
+![svelereact](https://user-images.githubusercontent.com/26542107/145724696-ea4abbed-200a-40fe-8c00-c31a155a98b6.jpg)
+
 
 
 
