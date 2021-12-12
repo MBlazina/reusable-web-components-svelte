@@ -10,9 +10,9 @@ End result
 
 
 ## Why Svelte
-One of the most popular frontend libraries at the moment is React.js but it is not very usable for web components. The main reason is that as any other library you need to add all its dependancies to your project/component and react.js and react-dom.js with any web component no mather how small it is you will have attached like 150kb of dependancies and here is where Svelte comes in
+One of the most popular frontend libraries at the moment is React.js but it is not very usable for web components. The main reason is that like other library you need to add all its dependencies to your project/component and react.js and react-dom.js with any web component no matter how small it is you will have attached like 150kb of dependencies and here is where Svelte comes in
 
-Writing web components the hardcore way, pure JS is a bit of a pain. You need to write your component in pure JS with element.innerHTML and than all your code is wraped in template literals and you lose any autocomplete, suggestion, emmet or similar coding help that you usually have, and for complex components it would be very hard to write it and maintain later.
+Writing web components the hardcore way, pure JS is a bit of a pain. You need to write your component in pure JS with element.innerHTML and than all your code is wrapped in template literals and you lose any autocomplete, suggestion, emmet or similar coding help that you usually have, and for complex components, it would be very hard to write it and maintain later.
 
 Example of a pure JS web component:
 ```
@@ -39,7 +39,7 @@ template.innerHTML = `
 
 ## Pros of Svelte
 1. ### Bundle size
-As we said, Svelte is a compiler so all your code in the end will be optimized, minimised and also all the unused scss will be deleted in the build.
+As we said, Svelte is a compiler so all your code, in the end, will be optimized, minimized and also all the unused scss will be deleted in the build.
 Svelte also has a lot less boilerplate code or 8 lines block of code with array destructuring to update one variable like it is the case of React but the user experience and ease of use is subjective so I will just leave a meme here :D 
 
 ![svelereact](https://user-images.githubusercontent.com/26542107/145724696-ea4abbed-200a-40fe-8c00-c31a155a98b6.jpg)
@@ -54,7 +54,7 @@ In svelte all the props at their core are variables and to define a simple city 
 
 
 4. ### Svelte await block
-if we need to get data from some API and display it in some elements for example, we can use the svelte special await block that looks like:
+if we need to get data from some API and display it in some elements, for example, we can use the svelte special await block that looks like:
 ```
 {#await somePromise}
  before promise is resolved
@@ -63,7 +63,7 @@ after promise is resolved
 {/await
 ```
 
-Example of fetching weather data and add it in a header:
+Example of fetching weather data and adding it in the header:
 ```
   {#await getWeather(urlWeather)}
     <p>Loading...</p>
@@ -77,7 +77,7 @@ Example of fetching weather data and add it in a header:
 
 
 5. ### Svelte each block
-Going trough a list of elements and generating required items is very easy using the each block nad it looks like:
+Going through a list of elements and generating required items is very easy using the each block nad it looks like:
 ```
 {#each items as item}
     <li> {item} </li>
@@ -106,4 +106,4 @@ Very easy to use if-else block implementation, example:
 ```
 
 # Conclusion
-In my opinion, using Svelte to create reusable web components is a great choice because of all the advantages listed above and those are just some of the most usefull ones.
+In my opinion, using Svelte to create reusable web components is a great choice because of all the advantages listed above, and those are just some of the most useful ones.
